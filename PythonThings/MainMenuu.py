@@ -1,11 +1,15 @@
 import pygame
+import json #Checks DATASAVE
+import os #Checks DATASAVE
 from sys import exit
 from button import Button
-from Act1Dialogue import dialoguee1
+from Act1Dialogue import dialoguee
 from Act1scene import mainn
+
 
 import time
 pygame.init()
+#f
 
 WIDTH, HEIGHT = 1080, 585
 
@@ -20,10 +24,33 @@ transparent = (0, 0, 0, 0)
 BLACK = (0, 0, 0)
 fade_Counter = 0
 Actt = 1
-Musicc = True
-Sound = True
 
+#Checks DATASAVE
 
+game_data = {
+    'level': 1,
+    'Sound': 1,
+    'Musics': 1,
+}
+
+save_file = 'savefile.json'
+
+def save_game():
+    with open(save_file, 'w') as f:
+        json.dump(game_data, f)
+    print("Game saved!")
+
+# Function to load game data
+def load_game():
+    global game_data
+    if os.path.exists(save_file):
+        with open(save_file, 'r') as f:
+            game_data = json.load(f)
+        print("Game loaded!")
+    else:
+        print("No save file found. Starting a new game.")
+
+load_game()
 
 #Audio
 Buttonsound = pygame.mixer.Sound('Audiofile/Button.mp3')
@@ -79,6 +106,27 @@ text_gameflow = test_font.render('Gameflow: ', False, 'Green')
 
 Timer = pygame.time.Clock()
 
+#Checks settings by file 
+if game_data['Musics'] == 1:
+    Ark1music.set_volume(0)
+
+if game_data['Musics'] == 0:
+    Ark1music.set_volume(1)
+
+if game_data['Sound'] == 0:
+    Buttonsound.set_volume(1)
+    ActSelection.set_volume(1)
+    ArkSelection.set_volume(1)
+    PlayButtonSound.set_volume(1)
+    Talksound.set_volume(1)
+            
+if game_data['Sound'] == 1:
+    Buttonsound.set_volume(0)
+    ActSelection.set_volume(0)
+    ArkSelection.set_volume(0)
+    PlayButtonSound.set_volume(0)
+    Talksound.set_volume(0)
+
 print('Tesllo')
 
 text_font = pygame.font.SysFont(None, 60, bold = True)
@@ -92,12 +140,12 @@ class Intro:
     def __init__(self):
 
         WIDTH, HEIGHT = 1080, 585
-        BACKGROUND_COLOR = (30, 30, 30)  # Dark gray
-        TEXT_COLOR = (255, 255, 255)      # White
+        BACKGROUND_COLOR = (30, 30, 30)  #Darkgray
+        TEXT_COLOR = (255, 255, 255)      #White
         FONT_SIZE = 64
-        INTRO_DURATION = 3000  # 3 seconds
+        INTRO_DURATION = 3000  #3seconds
         start_time = pygame.time.get_ticks()
-        self.time_left = 10  # seconds
+        self.time_left = 10 
         self.start_time = pygame.time.get_ticks()
         font = pygame.font.Font(None, FONT_SIZE)
         
@@ -106,6 +154,7 @@ class Intro:
             mouse = pygame.mouse.get_pos() 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    save_game()
                     pygame.quit()
                     exit()
             
@@ -128,10 +177,10 @@ class Intro:
 
             screen.blit(text_surface2, text_rect2)
 
-            # Update the display
+            
             pygame.display.flip()
 
-            # Check if the duration has passed
+            
             if pygame.time.get_ticks() - start_time > INTRO_DURATION:
                  Swoosh.play()
                  Transition()
@@ -145,16 +194,13 @@ class Intro:
 class Settingss:
     def __init__(self):
         loop = True
-        global Musicc
-        global Sound
-        Musicc = Musicc
-        Sound = Sound
         Transition2()
         while True:
             pygame.init()
             mouse = pygame.mouse.get_pos() 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    save_game()
                     pygame.quit()
                     exit()
 
@@ -164,20 +210,20 @@ class Settingss:
 
 
             if MusicOff.is_pressed():
-                if Musicc == True:
-                    Musicc = False
+                if game_data['Musics'] == 0:
+                    game_data['Musics'] = 1
                     print("Music Off")
                     Ark1music.set_volume(0)
 
             if MusicOn.is_pressed():
-                if Musicc == False:
-                    Musicc = True
+                if game_data['Musics'] == 1:
+                    game_data['Musics'] = 0
                     print("Music On")
                     Ark1music.set_volume(1)
 
             if SoundOn.is_pressed():
-                if Sound == False:
-                    Sound = True
+                if game_data['Sound'] == 1:
+                    game_data['Sound'] = 0
                     print("Sound On")
                     Buttonsound.set_volume(1)
                     ActSelection.set_volume(1)
@@ -186,8 +232,8 @@ class Settingss:
                     Talksound.set_volume(1)
             
             if SoundOff.is_pressed():
-                if Sound == True:
-                    Sound = False
+                if game_data['Sound'] == 0:
+                    game_data['Sound'] = 1
                     print("Sound Off")
                     Buttonsound.set_volume(0)
                     ActSelection.set_volume(0)
@@ -203,25 +249,31 @@ class Settingss:
 
             Backbuttonsettings.draw(screen)
 
-            if Musicc == True:
-                draw_text("Music: On", text_font, (0, 255, 0), 10,300)
-            elif Musicc == False:
+            #kdjadhaadkljijjlkhjyuplaopdpp
+
+            if game_data['Musics'] == 0:
+                draw_text("Musics: On", text_font, (0, 255, 0), 10,300)
+            elif game_data['Musics'] == 1:
                 draw_text("Music: Off", text_font, (255, 0, 0), 10,300)
 
-            if Sound == True:
+            if game_data['Sound'] == 0:
                 draw_text("Sound: On", text_font, (0, 255, 0), 10,350)
-            elif Sound == False:
+            elif game_data['Sound'] == 1:
                 draw_text("Sound: Off", text_font, (255, 0, 0), 10,350)
 
             if Backbuttonsettings.is_pressed():
                 if loop == True:
                     loop = False
+                    print(game_data['Sound'])
+                    print(game_data['Musics'])
+                    save_game()
                     Buttonsound.play()
                     Transition2()
                     MainMenu()
                     break
                     #screen.fill((255,255,255))#white
                     #game = PlayScene()
+                    
 
             pygame.display.update()
             Timer.tick(60)
@@ -231,11 +283,15 @@ class MainMenu:
         loop = True
         transitioning = False
         slide_position = HEIGHT
+        #screen = pygame.display.set_mode((WIDTH, HEIGHT))
+        #font = pygame.font.Font(None, 36)
         while True:
+
             pygame.init()
             mouse = pygame.mouse.get_pos() 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    save_game()
                     pygame.quit()
                     exit()
 
@@ -262,6 +318,7 @@ class MainMenu:
                     loop = False
                     PlayButtonSound.play()
                     print("Play button pressed")
+                    print(game_data['level'])
                     #screen.fill((255,255,255))#white
                     #game = PlayScene()
                     break
@@ -291,6 +348,7 @@ class PlayScene:
             mouse = pygame.mouse.get_pos() 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    save_game()
                     pygame.quit()
                     exit()
             
@@ -371,7 +429,7 @@ class Transition:
     def __init__(self):
         TurnTransion = True
         fade_Counter = 0
-        self.time_left = 4  # seconds
+        self.time_left = 4  #seconds
         self.start_time = pygame.time.get_ticks()
         while True:
             pygame.init()
@@ -439,6 +497,7 @@ class Ark1:
             pygame.init()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    save_game()
                     pygame.quit()
                     exit()
 
@@ -462,7 +521,7 @@ class Ark1:
                     ActSelection.play()
                     Ark1music.stop()
                     Transition()
-                    dialoguee1()
+                    dialoguee()
                     break
                 else:
                     Buttonsound.play()
@@ -516,7 +575,7 @@ class Ark1:
             pygame.display.update() 
 
 
-#Main Run System
+#MainRun System
 if __name__ == '__main__':
     game =  Intro()
 

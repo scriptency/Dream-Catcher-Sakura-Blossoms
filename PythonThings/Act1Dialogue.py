@@ -1,14 +1,48 @@
 import pygame
-import time
+import time 
+import json #Checks DATASAVE
+import os #Checks DATASAVE
 from Act1scene import mainn
 
 pygame.init()
 
+Talksound = pygame.mixer.Sound('Audiofile/DialogueSound.mp3') 
+
+#Checks DATASAVE
+save_file = 'savefile.json'
+
+def save_game():
+    with open(save_file, 'w') as f:
+        json.dump(game_data, f)
+    print("Game saved!")
+
+#Function to load game data
+def load_game():
+    global game_data
+    if os.path.exists(save_file):
+        with open(save_file, 'r') as f:
+            game_data = json.load(f)
+        print("Game loaded!")
+    else:
+        print("No save file found. Starting a new game.")
+
+
+load_game()
+
+if game_data['Sound'] == 0:
+    Talksound.set_volume(1)
+else:
+    Talksound.set_volume(0)
+
+if game_data['Musics'] == 0:
+    pass
+else:
+    pass
+
+#-------------------------------------------------------------------------------
+
 WIDTH, HEIGHT = 1080, 585
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-
-
-Talksound = pygame.mixer.Sound('Audiofile/DialogueSound.mp3') 
 
 
 WHITE = (255, 255, 255)
@@ -26,12 +60,14 @@ messages = [
 ]
 
 def typewriter_effect(message, speed=0.05):
-    """Generator for simulating typing effect."""
     for char in message:
         yield char
         time.sleep(speed)
 
-def dialoguee1():
+def dialoguee():
+
+    import MainMenuu
+
     clock = pygame.time.Clock()
     running = True
     current_message = 0
@@ -42,8 +78,11 @@ def dialoguee1():
 
     while running:
         screen.fill(BLACK)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
                 running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_e and not typing:
@@ -79,5 +118,5 @@ def dialoguee1():
 
 
 if __name__ == "__main__":
-    dialoguee1()
+    dialoguee()
     mainn()

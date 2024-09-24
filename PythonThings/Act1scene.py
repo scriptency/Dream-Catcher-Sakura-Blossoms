@@ -1,7 +1,6 @@
 import pygame
 import sys
 
-# Initialize Pygame
 pygame.init()
 
 #Audio
@@ -15,11 +14,15 @@ DIALOGUE_HEIGHT = 120
 DIALOGUE_COLOR = (200, 200, 200)
 TYPING_SPEED = 0.05
 PLAYER_SPEED = 2.5
-ANIMATION_SPEED = 0.005
+ANIMATION_SPEED = 0.009
 ANIMATION_SPEED2 = 0.1
 FADE_SPEED = 5
 transitioning = False
 NAME_COLOR = (50, 50, 150) 
+
+box_width, box_height = 9999, 150
+box_x = (SCREEN_WIDTH - box_width) // 1 
+box_y = (SCREEN_HEIGHT - box_height) // 1  
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
@@ -27,7 +30,12 @@ idle_frames = [pygame.transform.scale(pygame.image.load('PythonImage/'f'idle_{i}
 walk_frames = [pygame.transform.scale(pygame.image.load('PythonImage/'f'walk_{i}.png'), (80, 100)) for i in range(1, 3)]
 npc_image = pygame.transform.scale(pygame.image.load('PythonImage/idle_1.png'), (80, 100))
 npc_profile_image = pygame.transform.scale(pygame.image.load('PythonImage/idle_1.png'), (100, 100))
-interaction_icon = pygame.transform.scale(pygame.image.load('PythonImage/EIcon.jpg'), (30, 30))
+interaction_icon = pygame.transform.scale(pygame.image.load('PythonImage/EIcon.png'), (30, 30))
+
+#LocketAdd
+Locket = pygame.image.load("PythonImage/Lockett.jpg")
+scaled_image = pygame.transform.scale(Locket, (60, 60))
+image_pos = (400, 450)
 
 font = pygame.font.Font(None, 36)
 name_font = pygame.font.Font(None, 42) 
@@ -38,14 +46,18 @@ typing = False
 dialogue_index = 0
 dialogue_cooldown = 300
 last_dialogue_time = 0
-INTERACTION_DISTANCE = 50
+INTERACTION_DISTANCE = 30
+player_pos = (50, 50)
+scene = 1
 
-class Player:
+class Player():
+    global player_pos
+
     def __init__(self):
         self.idle_frames = idle_frames
         self.walk_frames = walk_frames
         self.image = self.idle_frames[0]
-        self.rect = self.image.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 1.7))
+        self.rect = self.image.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 1.4))
         self.position = pygame.Vector2(self.rect.center)
         self.animation_index = 0
         self.is_walking = False
@@ -53,6 +65,8 @@ class Player:
 
     def update(self, keys):
         self.is_walking = False
+        global scene
+        
         if keys[pygame.K_a]:  
             self.position.x -= PLAYER_SPEED
             self.is_walking = True
@@ -61,25 +75,42 @@ class Player:
             self.position.x += PLAYER_SPEED
             self.is_walking = True
             self.facing_right = True  
-        
+
         self.rect.center = self.position
 
-        
+        if self.position.x < 0:
+            if scene == 2:
+                scene -= 1
+                
+                self.position = pygame.Vector2(1050,418)
+                self.rect.center = self.position
+            
+        elif self.position.x > SCREEN_WIDTH:
+            if scene == 1:
+                scene += 1
+                self.position = pygame.Vector2(10, 418)
+                self.rect.center = self.position
+
+        else:
+            pass
+
         if self.is_walking:
             self.animation_index += ANIMATION_SPEED2
             if self.animation_index >= len(self.walk_frames):
                 self.animation_index = 0
             self.image = self.walk_frames[int(self.animation_index)]
         else:
-            
             self.animation_index += ANIMATION_SPEED
             if self.animation_index >= len(self.idle_frames):
                 self.animation_index = 0
             self.image = self.idle_frames[int(self.animation_index)]
 
-        
         if not self.facing_right:
             self.image = pygame.transform.flip(self.image, True, False)
+
+    def teleport(self, new_position):
+        self.position = pygame.Vector2(new_position)
+        self.rect.center = self.position
 
     def draw(self, surface):
         surface.blit(self.image, self.rect.topleft)
@@ -88,7 +119,7 @@ class Player:
 class NPC:
     def __init__(self):
         self.image = npc_image
-        self.rect = self.image.get_rect(center=(SCREEN_WIDTH // 2 + 200, SCREEN_HEIGHT // 1.7))
+        self.rect = self.image.get_rect(center=(SCREEN_WIDTH // 2 + 200, SCREEN_HEIGHT // 1.4))
         self.name = "Peklat"
 
     def draw(self, surface):
@@ -132,35 +163,97 @@ def wrap_text(text, font, max_width):
 
 #Main
 def mainn():
-    global dialogue_text, typing, dialogue_index, last_dialogue_time, PLAYER_SPEED
+    global scene
+    global dialogue_text, typing, dialogue_index, last_dialogue_time, PLAYER_SPEED, player_pos
+    print(player_pos)
     player = Player()
     npc = NPC()
     clock = pygame.time.Clock()
     slide_position = SCREEN_HEIGHT
-    Dialoguee = 1
-    start_time = pygame.time.get_ticks()
     transitioning = False
+    locketposition = scaled_image.get_rect(topleft=image_pos)
+    some_condition = True
+    
 
     while True:
+        pygame.draw.rect(screen, (92, 64, 51), (box_x, box_y, box_width, box_height))
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN: #This find lockett pick up
+                if locketposition == None:
+                   pass
+                else:
+                    if locketposition.collidepoint(event.pos):
+                        locketposition = None 
+                        print("Locket Grab")
+
+        if scene == 1:
+            screen.fill((255, 255, 255))
+            pygame.draw.rect(screen, (92, 64, 51), (box_x, box_y, box_width, box_height))
+            player.draw(screen)
+            npc.draw(screen)
+            text = pygame.font.Font(None, 74).render("Background 1 Test", True, (0, 0, 0)); screen.blit(text, text.get_rect(center=(400, 300)))
+            #Add Locket
+            if locketposition:
+                screen.blit(scaled_image, locketposition.topleft,)
+
+            if player.rect.colliderect(npc.rect.inflate(INTERACTION_DISTANCE, INTERACTION_DISTANCE)):
+                screen.blit(interaction_icon, (player.rect.centerx + -15, player.rect.centery - 80))
+
+                current_time = pygame.time.get_ticks()
+                if keys[pygame.K_e] and current_time - last_dialogue_time > dialogue_cooldown:
+                    if typing:
+                        typing = False
+                        PLAYER_SPEED = 2.5
+                        Talksound.stop()
+                    else:
+                        PLAYER_SPEED = 0
+                        typing = True
+                        dialogue_index = 0
+                        dialogue_text = ""
+                        npc.look_at(player)
+                    last_dialogue_time = current_time
+            else:
+                if typing:
+                    typing = False
+
+        elif scene == 2:
+            player_pos = 30
+
+            #if some_condition:
+                #player.teleport((400, 410))
+                #some_condition = False
+
+            
+   
+            
+            screen.fill((255, 255, 255))
+            text = pygame.font.Font(None, 74).render("Background 2 Test", True, (0, 0, 0)); screen.blit(text, text.get_rect(center=(400, 300)))
+            pygame.draw.rect(screen, (92, 64, 51), (box_x, box_y, box_width, box_height))
+            player.draw(screen)
+
 
         #Timer by 5 Seconds
             #current_time = pygame.time.get_ticks()
             #elapsed_time = (current_time - start_time) / 1000
             #Timer = max(8 - int(elapsed_time), 0)
             #if Timer <= 0:
-        screen.fill((255, 255, 255))
-        player.draw(screen)
-        npc.draw(screen)
-        transitioning = True
-
-
         
         keys = pygame.key.get_pressed()
         player.update(keys)
+
+
+        if typing and dialogue_index < len(full_dialogue_text):
+            dialogue_text += full_dialogue_text[dialogue_index]
+            dialogue_index += 1
+            pygame.time.delay(int(TYPING_SPEED * 1000))
+
+        
+
+        if typing:
+            draw_dialogue_box(npc.name, dialogue_text, pygame.transform.scale(pygame.image.load('PythonImage/idle_1.png'), (100, 100)), (0, 0, 0))
 
 
         if transitioning: #Blackscreen
@@ -168,35 +261,7 @@ def mainn():
 
         slide_position -= 5
 
-        
-        if player.rect.colliderect(npc.rect.inflate(INTERACTION_DISTANCE, INTERACTION_DISTANCE)):
-            screen.blit(interaction_icon, (player.rect.centerx + 20, player.rect.centery - 20))
-
-            current_time = pygame.time.get_ticks()
-            if keys[pygame.K_e] and current_time - last_dialogue_time > dialogue_cooldown:
-                if typing:
-                    typing = False
-                    PLAYER_SPEED = 2.5
-                    Talksound.stop()
-                else:
-                    PLAYER_SPEED = 0
-                    typing = True
-                    dialogue_index = 0
-                    dialogue_text = ""
-                    npc.look_at(player)
-                last_dialogue_time = current_time
-        else:
-            if typing:
-                typing = False
-
-        if typing and dialogue_index < len(full_dialogue_text):
-            dialogue_text += full_dialogue_text[dialogue_index]
-            dialogue_index += 1
-            pygame.time.delay(int(TYPING_SPEED * 1000))
-
-        if typing:
-            draw_dialogue_box(npc.name, dialogue_text, pygame.transform.scale(pygame.image.load('PythonImage/idle_1.png'), (100, 100)), (0, 0, 0))
-
+        transitioning = True
         pygame.display.flip()
         clock.tick(60)
 

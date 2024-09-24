@@ -24,7 +24,6 @@ class Button:
         mouse_pos = pygame.mouse.get_pos()
 
         if self.rectt.collidepoint(mouse_pos):
-            # Scale the image up
             new_width = int(self.original_image.get_width() * (self.scale + 0.12))
             new_height = int(self.original_image.get_height() * (self.scale + 0.12))
             scaled_image = pygame.transform.smoothscale(self.original_image, (new_width, new_height))
