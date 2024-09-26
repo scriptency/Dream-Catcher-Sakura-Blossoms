@@ -4,43 +4,46 @@ import sys
 # Initialize Pygame
 pygame.init()
 
-# Screen dimensions
+# Constants
 WIDTH, HEIGHT = 800, 600
+FPS = 60
+TEXT_SPEED = 5
+FONT_SIZE = 50
+
+# Set up the display
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Hover Effect Example")
+pygame.display.set_caption('Moving Text Example')
 
-# Load your image (make sure to have a valid image file)
-image = pygame.image.load('PythonImage/idle_1.png')  # Replace with your image file
-image_rect = image.get_rect()
+# Set up fonts
+font = pygame.font.Font(None, FONT_SIZE)
 
-# Button properties
-button_color = (100, 200, 100)
-button_rect = pygame.Rect(300, 250, 200, 100)  # x, y, width, height
+def draw_moving_text(text, start_x, y, speed):
+    text_surface = font.render(text, True, (255, 255, 255))  # White text
+    text_rect = text_surface.get_rect(topleft=(start_x, y))
+
+    new_x = start_x + speed
+
+    screen.blit(text_surface, text_rect)
+    
+    return new_x
 
 # Main loop
-hovering = False
+x_pos = 0
+clock = pygame.time.Clock()
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
 
-    # Get mouse position
-    mouse_pos = pygame.mouse.get_pos()
+    # Fill the screen with black
+    screen.fill((0, 0, 0))  # Black background
 
-    # Check if mouse is hovering over the button
-    hovering = button_rect.collidepoint(mouse_pos)
-
-    # Clear the screen
-    screen.fill((255, 255, 255))
-
-    # Draw the button
-    pygame.draw.rect(screen, button_color, button_rect)
-
-    # Draw the image if hovering
-    if hovering:
-        image_rect.topleft = (300, 100)  # Set position where you want the image to appear
-        screen.blit(image, image_rect)
+    # Call the moving text function
+    x_pos = draw_moving_text("Hello, Pygame!", x_pos, HEIGHT // 2 - FONT_SIZE // 2, TEXT_SPEED)
 
     # Update the display
     pygame.display.flip()
+
+    # Cap the frame rate
+    clock.tick(FPS)

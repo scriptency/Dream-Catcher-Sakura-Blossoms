@@ -54,6 +54,15 @@ INTERACTION_DISTANCE = 30
 player_pos = (50, 50)
 scene = 1
 
+def draw_moving_text(text, start_x, y, speed):
+    text_surface = pygame.font.Font(None, 50).render(text, True, (51, 0, 25))
+    text_rect = text_surface.get_rect(topleft=(start_x, y))
+
+    new_x = start_x + speed
+
+    screen.blit(text_surface, text_rect)
+    return new_x, new_x > SCREEN_WIDTH
+
 class Player():
     global player_pos, scene
 
@@ -188,7 +197,11 @@ def mainn():
     locketposition = scaled_image.get_rect(topleft=image_pos)
     some_condition = True
     LoopedTime = True
-    
+    # Constants
+    TEXT_SPEED = 5
+    FONT_SIZE = 35
+    text_done = False
+    x_pos = -1000
 
     while True:
         pygame.draw.rect(screen, (92, 64, 51), (box_x, box_y, box_width, box_height))
@@ -272,6 +285,9 @@ def mainn():
 
         if typing:
             draw_dialogue_box(npc.name, dialogue_text, pygame.transform.scale(pygame.image.load('PythonImage/idle_1.png'), (100, 100)), (0, 0, 0))
+
+        if not text_done:  
+            x_pos, text_done = draw_moving_text("(ARK1)ACT 1 - Orphanage", x_pos, SCREEN_HEIGHT // 3 - FONT_SIZE // 1.5, TEXT_SPEED)
 
 
         if transitioning: #Blackscreen
