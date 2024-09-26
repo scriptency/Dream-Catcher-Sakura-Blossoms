@@ -1,10 +1,14 @@
 import pygame
 import json #Checks DATASAVE
 import os #Checks DATASAVE
+import sys
+import time
 from sys import exit
+from Tutorial import main
 from button import Button
 from Act1Dialogue import dialoguee
 from Act1scene import mainn
+
 
 
 import time
@@ -24,6 +28,7 @@ transparent = (0, 0, 0, 0)
 BLACK = (0, 0, 0)
 fade_Counter = 0
 Actt = 1
+loopedTime = True
 
 #Checks DATASAVE
 
@@ -100,6 +105,8 @@ titlee2 = pygame.image.load('PythonImage/ActText.png')
 button_play = Button('PythonImage/button_play.png', (20,210))
 button_exit = Button('PythonImage/button_exit.png', (20,330))
 button_settings = Button('PythonImage/button_settings.png', (20,270))
+MembersList = pygame.image.load('PythonImage/MemberlistImage.png')  # Replace with your image file
+MemberList_rect = MembersList.get_rect()
 
 test_font = pygame.font.Font(None, 30)
 text_gameflow = test_font.render('Gameflow: ', False, 'Green')
@@ -195,6 +202,7 @@ class Settingss:
     def __init__(self):
         loop = True
         Transition2()
+        loopedTime = True
         while True:
             pygame.init()
             mouse = pygame.mouse.get_pos() 
@@ -207,6 +215,10 @@ class Settingss:
 
 
             screen.fill((0, 0, 0))
+
+            if loopedTime: #StopLag
+                loopedTime = False
+                time.sleep(1)
 
 
             if MusicOff.is_pressed():
@@ -283,6 +295,8 @@ class MainMenu:
         loop = True
         transitioning = False
         slide_position = HEIGHT
+        loopedTime = True
+        hovering = False
         #screen = pygame.display.set_mode((WIDTH, HEIGHT))
         #font = pygame.font.Font(None, 36)
         while True:
@@ -296,6 +310,9 @@ class MainMenu:
                     exit()
 
             screen.blit(backgroundd, (0,0))
+            if loopedTime: #StopLag
+                loopedTime = False
+                time.sleep(1)
             screen.blit(Logo, (850,350))
             screen.blit(ProgressText, (200,150))
             #screen.blit(titlee, (0,0))
@@ -311,6 +328,11 @@ class MainMenu:
             slide_position -= 8
 
             transitioning = True
+            mouse_pos = pygame.mouse.get_pos()
+            hovering = pygame.Rect(40,450,150,50).collidepoint(mouse_pos)
+            if hovering:
+                MemberList_rect.topleft = (500, 80)  # Set position where you want the image to appear
+                screen.blit(MembersList, MemberList_rect)
 
 
             if button_play.is_pressed():
@@ -337,11 +359,28 @@ class MainMenu:
             Timer.tick(60)
 
 class PlayScene:
+    
     def __init__(self):
         Act = 0
         transitioning = False
         slide_position = HEIGHT
+        loopedTime = True
         while True:
+            if game_data['level'] == 1:
+                #Tutorial.Tutor()
+                main()
+                screen.fill((255,255,255))#white
+                screen.blit(text_gameflow, (0,0))
+                screen.blit(backgroundd2, (0,0))
+                screen.blit(Whiteprops, (0,0))
+                #screen.blit(titlee2, (25,0))
+                Act1Chooser.draw(screen)
+                Act2Chooser.draw(screen)
+                Act3Chooser.draw(screen)
+                Act4Chooser.draw(screen)
+                Act3Chooser.draw(screen)
+                break
+                
 
             
             pygame.init()
@@ -353,6 +392,9 @@ class PlayScene:
                     exit()
             
             screen.fill((255,255,255))#white
+            if loopedTime: #StopLag
+                loopedTime = False
+                time.sleep(1)
             screen.blit(text_gameflow, (0,0))
             screen.blit(backgroundd2, (0,0))
             screen.blit(Whiteprops, (0,0))
@@ -485,6 +527,8 @@ class Transition2:
             self.time_left = max(3 - int(elapsed_time), 0)
             if self.time_left <= 0:
                 break
+        
+        
 
 class Ark1:
     def __init__(self):
@@ -578,21 +622,30 @@ class Ark1:
 #MainRun System
 if __name__ == '__main__':
     game =  Intro()
+    def Retry():
 
-    game = MainMenu()
+        game = MainMenu()
 
-    Transition2()
+        Transition2()
 
-    game = PlayScene()
+        game = PlayScene()
 
-    if Actt == 1:
-        Transition()
-        Ark1()
-    elif Actt == 2:
-        pass
-    elif Actt == 3:
-        pass
-    elif Actt == 4:
-        pass
+        if game_data['level'] == 1:
+            game_data['level'] = 2
+            save_game()
+            print("Tutorial Complete!")
+            Retry()
 
-    mainn()
+        if Actt == 1:
+            Transition()
+            Ark1()
+        elif Actt == 2:
+            pass
+        elif Actt == 3:
+            pass
+        elif Actt == 4:
+            pass
+
+        mainn()
+
+    Retry()

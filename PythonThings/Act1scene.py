@@ -1,7 +1,10 @@
 import pygame
 import sys
+import time
+
 
 pygame.init()
+
 
 #Audio
 Talksound = pygame.mixer.Sound('Audiofile/DialogueSound.mp3') 
@@ -19,6 +22,7 @@ ANIMATION_SPEED2 = 0.1
 FADE_SPEED = 5
 transitioning = False
 NAME_COLOR = (50, 50, 150) 
+LoopedTime = True
 
 box_width, box_height = 9999, 150
 box_x = (SCREEN_WIDTH - box_width) // 1 
@@ -33,7 +37,7 @@ npc_profile_image = pygame.transform.scale(pygame.image.load('PythonImage/idle_1
 interaction_icon = pygame.transform.scale(pygame.image.load('PythonImage/EIcon.png'), (30, 30))
 
 #LocketAdd
-Locket = pygame.image.load("PythonImage/Lockett.jpg")
+Locket = pygame.image.load("PythonImage/Lockett.png")
 scaled_image = pygame.transform.scale(Locket, (60, 60))
 image_pos = (400, 450)
 
@@ -51,7 +55,7 @@ player_pos = (50, 50)
 scene = 1
 
 class Player():
-    global player_pos
+    global player_pos, scene
 
     def __init__(self):
         self.idle_frames = idle_frames
@@ -78,18 +82,28 @@ class Player():
 
         self.rect.center = self.position
 
-        if self.position.x < 0:
+        if self.position.x < 30: #Pabalik START
+            if scene == 1: #Fix
+                self.position = pygame.Vector2(30, 418)
+                self.rect.center = self.position
+
             if scene == 2:
                 scene -= 1
                 
                 self.position = pygame.Vector2(1050,418)
                 self.rect.center = self.position
             
-        elif self.position.x > SCREEN_WIDTH:
+        elif self.position.x > 1050: #Papunta END
+            if scene == 2:
+                self.position = pygame.Vector2(1050,418)
+                self.rect.center = self.position
+
             if scene == 1:
                 scene += 1
-                self.position = pygame.Vector2(10, 418)
+                self.position = pygame.Vector2(30, 418)
                 self.rect.center = self.position
+        
+
 
         else:
             pass
@@ -173,6 +187,7 @@ def mainn():
     transitioning = False
     locketposition = scaled_image.get_rect(topleft=image_pos)
     some_condition = True
+    LoopedTime = True
     
 
     while True:
@@ -187,10 +202,13 @@ def mainn():
                 else:
                     if locketposition.collidepoint(event.pos):
                         locketposition = None 
-                        print("Locket Grab")
+                        print("Testing")
 
         if scene == 1:
             screen.fill((255, 255, 255))
+            if LoopedTime:
+                LoopedTime = False
+                time.sleep(1)
             pygame.draw.rect(screen, (92, 64, 51), (box_x, box_y, box_width, box_height))
             player.draw(screen)
             npc.draw(screen)
@@ -267,3 +285,5 @@ def mainn():
 
 if __name__ == "__main__":
     mainn()
+
+    
