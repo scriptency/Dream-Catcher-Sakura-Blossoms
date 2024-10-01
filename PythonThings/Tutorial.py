@@ -106,11 +106,11 @@ class Player():
         self.is_walking = False
         global scene
         
-        if keys[pygame.K_a]:  
+        if keys[pygame.K_LEFT]:  
             self.position.x -= PLAYER_SPEED
             self.is_walking = True
             self.facing_right = False  
-        if keys[pygame.K_d]:  
+        if keys[pygame.K_RIGHT]:  
             self.position.x += PLAYER_SPEED
             self.is_walking = True
             self.facing_right = True  
@@ -299,13 +299,13 @@ def main():
                         print("No")
                         PickYN = 2
                         pass
-                elif event.key == pygame.K_a:
-                    if Next == 4:
-                        Next = 5
+                elif event.key == pygame.K_LEFT:
+                    if Next == 5:
+                        Next = 6
                         pass
-                elif event.key == pygame.K_d:
-                    if Next == 4:
-                        Next = 5
+                elif event.key == pygame.K_RIGHT:
+                    if Next == 5:
+                        Next = 6
                         pass
 #MainGame------------------------------------------------------------------------------------------------------------------------------------------------------
         if scene == 1:
@@ -351,28 +351,35 @@ def main():
                         screen.fill((255, 255, 255))
                         pygame.draw.rect(screen, (92, 64, 51), (box_x, box_y, box_width, box_height))
                         player.draw(screen)
-                        DialogueText = "In your keyboard, press A to walk left and press D to walk right."
-                        text = pygame.font.Font(None, 25).render("Press T To Skip:", True, (0, 0, 0)); screen.blit(text, text.get_rect(center=(120, 150)))
+                        DialogueText = "In your keyboard."
+                        text = pygame.font.Font(None, 25).render("Press T To Continue:", True, (0, 0, 0)); screen.blit(text, text.get_rect(center=(120, 150)))
                         update_dialogue("Guide", DialogueText, pygame.image.load('PythonImage/guide.png'), (0, 0, 0))
                     if Next == 5:
+                        screen.fill((255, 255, 255))
+                        pygame.draw.rect(screen, (92, 64, 51), (box_x, box_y, box_width, box_height))
+                        player.draw(screen)
+                        DialogueText = "Press Left Arrow to walk left and press Right arrow to walk right."
+                        text = pygame.font.Font(None, 25).render("Press T To Skip:", True, (0, 0, 0)); screen.blit(text, text.get_rect(center=(120, 150)))
+                        update_dialogue("Guide", DialogueText, pygame.image.load('PythonImage/guide.png'), (0, 0, 0))
+                    if Next == 6:
                         screen.fill((255, 255, 255))
                         pygame.draw.rect(screen, (92, 64, 51), (box_x, box_y, box_width, box_height))
                         player.draw(screen)
                         DialogueText = "Niceee!"
                         text = pygame.font.Font(None, 25).render("Press T To Continue:", True, (0, 0, 0)); screen.blit(text, text.get_rect(center=(120, 150)))
                         update_dialogue("Guide", DialogueText, pygame.image.load('PythonImage/guide.png'), (0, 0, 0))
-                    if Next == 6:
+                    if Next == 7:
                         screen.fill((255, 255, 255))
                         pygame.draw.rect(screen, (92, 64, 51), (box_x, box_y, box_width, box_height))
                         player.draw(screen)
                         DialogueText = "Use these keys to navigate through the game."
                         text = pygame.font.Font(None, 25).render("Press T To Continue:", True, (0, 0, 0)); screen.blit(text, text.get_rect(center=(120, 150)))
                         update_dialogue("Guide", DialogueText, pygame.image.load('PythonImage/guide.png'), (0, 0, 0))
-                    if Next == 7:
+                    if Next == 8:
                         DialogueText = "Second step, grab the object by clicking them."
                         text = pygame.font.Font(None, 25).render("Press T To Continue:", True, (0, 0, 0)); screen.blit(text, text.get_rect(center=(120, 150)))
                         update_dialogue("Guide", DialogueText, pygame.image.load('PythonImage/guide.png'), (0, 0, 0))
-                    if Next == 8:
+                    if Next == 9:
                         screen.fill((255, 255, 255))
                         pygame.draw.rect(screen, (92, 64, 51), (box_x, box_y, box_width, box_height))
                         player.draw(screen)
@@ -381,35 +388,35 @@ def main():
                         update_dialogue("Guide", DialogueText, pygame.image.load('PythonImage/guide.png'), (0, 0, 0))
                         if locketposition:
                             screen.blit(scaled_image, locketposition.topleft,)
-                    if Next == 9:
+                    if Next == 10:
                         screen.fill((255, 255, 255))
                         pygame.draw.rect(screen, (92, 64, 51), (box_x, box_y, box_width, box_height))
                         player.draw(screen)
                         DialogueText = "Goodjob!"
                         text = pygame.font.Font(None, 25).render("Press T To Continue:", True, (0, 0, 0)); screen.blit(text, text.get_rect(center=(120, 150)))
                         update_dialogue("Guide", DialogueText, pygame.image.load('PythonImage/guide.png'), (0, 0, 0))
-                    if Next == 10:
+                    if Next == 11:
                         screen.fill((255, 255, 255))
                         pygame.draw.rect(screen, (92, 64, 51), (box_x, box_y, box_width, box_height))
                         player.draw(screen)
                         DialogueText = "Clicking on the highlighted objects or areas on the screen."
                         text = pygame.font.Font(None, 25).render("Press T To Continue:", True, (0, 0, 0)); screen.blit(text, text.get_rect(center=(120, 150)))
                         update_dialogue("Guide", DialogueText, pygame.image.load('PythonImage/guide.png'), (0, 0, 0))
-                    if Next == 11:
+                    if Next == 12:
                         screen.fill((255, 255, 255))
                         pygame.draw.rect(screen, (92, 64, 51), (box_x, box_y, box_width, box_height))
                         player.draw(screen)
                         DialogueText = "Interact of these items to progress through the game."
                         text = pygame.font.Font(None, 25).render("Press T To Continue:", True, (0, 0, 0)); screen.blit(text, text.get_rect(center=(120, 150)))
                         update_dialogue("Guide", DialogueText, pygame.image.load('PythonImage/guide.png'), (0, 0, 0))
-                    if Next == 12:
+                    if Next == 13:
                         screen.fill((255, 255, 255))
                         pygame.draw.rect(screen, (92, 64, 51), (box_x, box_y, box_width, box_height))
                         player.draw(screen)
                         DialogueText = "also to achieve your goals!"
                         text = pygame.font.Font(None, 25).render("Press T To Continue:", True, (0, 0, 0)); screen.blit(text, text.get_rect(center=(120, 150)))
                         update_dialogue("Guide", DialogueText, pygame.image.load('PythonImage/guide.png'), (0, 0, 0))
-                    if Next >= 13:
+                    if Next >= 14:
                         screen.fill((255, 255, 255))
                         pygame.draw.rect(screen, (92, 64, 51), (box_x, box_y, box_width, box_height))
                         player.draw(screen)

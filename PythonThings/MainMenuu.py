@@ -217,6 +217,8 @@ class Settingss:
             screen.fill((0, 0, 0))
 
             if loopedTime: #StopLag
+                screen.fill((0, 0, 0))
+                pygame.display.update() 
                 loopedTime = False
                 time.sleep(1)
 
@@ -311,6 +313,8 @@ class MainMenu:
 
             screen.blit(backgroundd, (0,0))
             if loopedTime: #StopLag
+                screen.fill((0, 0, 0))
+                pygame.display.update() 
                 loopedTime = False
                 time.sleep(1)
             screen.blit(Logo, (850,350))
@@ -378,7 +382,7 @@ class PlayScene:
                 Act2Chooser.draw(screen)
                 Act3Chooser.draw(screen)
                 Act4Chooser.draw(screen)
-                Act3Chooser.draw(screen)
+                #Act3Chooser.draw(screen)
                 break
                 
 
@@ -393,17 +397,19 @@ class PlayScene:
             
             screen.fill((255,255,255))#white
             if loopedTime: #StopLag
+                screen.fill((0, 0, 0))
+                pygame.display.update() 
                 loopedTime = False
                 time.sleep(1)
             screen.blit(text_gameflow, (0,0))
             screen.blit(backgroundd2, (0,0))
-            screen.blit(Whiteprops, (0,0))
+            #screen.blit(Whiteprops, (0,0))
             #screen.blit(titlee2, (25,0))
             Act1Chooser.draw(screen)
             Act2Chooser.draw(screen)
             Act3Chooser.draw(screen)
             Act4Chooser.draw(screen)
-            Act3Chooser.draw(screen)
+            #Act3Chooser.draw(screen)
             #ArkPlay.draw(screen)
             Timer.tick(60)
 
@@ -484,7 +490,7 @@ class Transition:
         #Transion
             if TurnTransion == True:
                 if fade_Counter < 1080:
-                    fade_Counter += 1
+                    fade_Counter += 2
                     
                     pygame.draw.rect(screen, BLACK, (0, 0, fade_Counter, 595 / 2))
                     pygame.draw.rect(screen, BLACK, (1080 - fade_Counter, 585 / 2, 1080, 595 / 2))
@@ -515,7 +521,7 @@ class Transition2:
         #Transion
             if TurnTransion == True:
                 if fade_Counter < 1080:
-                    fade_Counter += 1
+                    fade_Counter += 2
                     
                     pygame.draw.rect(screen, BLACK, (0, 0, fade_Counter, 585))
 
@@ -536,6 +542,7 @@ class Ark1:
         slide_position = HEIGHT
         Act = 0
         Ark1music.play(-1) #Loop Music
+        loopedTime = True
         while True:
 
             pygame.init()
@@ -546,12 +553,17 @@ class Ark1:
                     exit()
 
             screen.blit(ark1, (0,0))
-            screen.blit(ActPicture, (300,100))
+            if loopedTime: #StopLag
+                screen.fill((0, 0, 0))
+                pygame.display.update() 
+                loopedTime = False
+                time.sleep(1)
+            #screen.blit(ActPicture, (300,100))
             arkAct1.draw(screen)
             arkAct2.draw(screen)
             arkAct3.draw(screen)
             arkAct4.draw(screen)
-            arkAct5.draw(screen)
+            #arkAct5.draw(screen)
 
             if transitioning: #Blackscreen
                 pygame.draw.rect(screen, (0, 0, 0), (0, slide_position - HEIGHT + 10, WIDTH, HEIGHT))
@@ -604,13 +616,13 @@ class Ark1:
                     Act = 5
 
             if Act == 1:
-                draw_text("Orphanage House", text_font, (193, 193, 0), 300,350)
+                draw_text("Peaceful Dreams", text_font, (193, 193, 0), 300,350)
             if Act == 2:
-                draw_text("Hallway", text_font, (193, 193, 0), 300,350)
+                draw_text("Memories", text_font, (193, 193, 0), 300,350)
             if Act == 3:
-                draw_text("Playground", text_font, (193, 193, 0), 300,350)
+                draw_text("Tragedies", text_font, (193, 193, 0), 300,350)
             if Act == 4:
-                draw_text("Children's Room", text_font, (193, 193, 0), 300,350)
+                draw_text("Lullaby", text_font, (193, 193, 0), 300,350)
             if Act == 5:
                 draw_text("Adoption Room", text_font, (193, 193, 0), 300,350)
 
